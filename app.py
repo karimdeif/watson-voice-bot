@@ -74,7 +74,7 @@ def getConvResponse():
     return jsonify(results=responseDetails)
 
 
-@app.route('/api/text-to-speech', methods=['POST'])
+#@app.route('/api/text-to-speech', methods=['POST'])
 def getSpeechFromText():
     inputText = request.form.get('text')
     ttsService = TextToSpeechV1()
@@ -100,7 +100,9 @@ def getSpeechFromText():
 def getTextFromSpeech():
 
     sttService = SpeechToTextV1()
-
+    #print("############################################")
+    #print(request.get_data(cache=False))
+    #print("############################################")
     response = sttService.recognize(
             audio=request.get_data(cache=False),
             content_type='audio/wav',

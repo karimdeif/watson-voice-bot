@@ -6,12 +6,13 @@ function displayMsgDiv(str, who) {
   const time = new Date();
   let hours = time.getHours();
   let minutes = time.getMinutes();
-  const ampm = hours >= 12 ? 'pm' : 'am';
-  hours = hours % 12;
-  hours = hours ? hours : 12; // the hour "0" should be "12"
+  //const ampm = hours >= 12 ? 'pm' : 'am';
+  //hours = hours % 12;
+  //hours = hours ? hours : 12; // the hour "0" should be "12"
   hours = hours < 10 ? '0' + hours : hours;
   minutes = minutes < 10 ? '0' + minutes : minutes;
-  const strTime = hours + ':' + minutes + ' ' + ampm;
+  //const strTime = hours + ':' + minutes + ' ' + ampm;
+  const strTime = hours + ':' + minutes;
   let msgHtml = "<div class='msg-card-wide mdl-card " + who + "'><div class='mdl-card__supporting-text'>";
   msgHtml += str;
   msgHtml += "</div><div class='" + who + "-line'>" + strTime + '</div></div>';
@@ -41,7 +42,8 @@ $(document).ready(function() {
   })
     .done(function(res) {
       conversationContext = res.results.context;
-      play(res.results.responseText);
+      //play(res.results.responseText);
+      sendMessageToAvatar(res.results.responseText);
       displayMsgDiv(res.results.responseText, 'bot');
     })
     .fail(function(jqXHR, e) {
@@ -61,7 +63,8 @@ function callConversation(res) {
   })
     .done(function(res, status) {
       conversationContext = res.results.context;
-      play(res.results.responseText);
+      //play(res.results.responseText);
+      sendMessageToAvatar(res.results.responseText);
       displayMsgDiv(res.results.responseText, 'bot');
     })
     .fail(function(jqXHR, e) {
@@ -72,13 +75,14 @@ function callConversation(res) {
 function play(inputText) {
   let buf;
 
+  
   const url = '/api/text-to-speech';
   const params = 'text=' + inputText;
   const request = new XMLHttpRequest();
   request.open('POST', url, true);
   request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
   request.responseType = 'arraybuffer';
-
+  
   // Decode asynchronously
   request.onload = function() {
     context.decodeAudioData(
@@ -114,7 +118,7 @@ recordMic.onclick = function() {
     try {
       recordMic.src = './static/img/mic_active.png';
       startRecording();
-      console.log('recorder started');
+      //console.log('recorder started');
       $('#q').val('I am listening ...');
     } catch (ex) {
       // console.log("Recognizer error .....");

@@ -4,9 +4,9 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="description" content="Airtel WVA POC Bot">
+  <meta name="description" content="Aramco Watson Avatart">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-  <title>Welcome to our Watson Web Voice bot</title>
+  <title>Aramco Watson Avatar</title>
 
   <!-- Add to homescreen for Chrome on Android -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -27,41 +27,44 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="https://code.getmdl.io/1.2.1/material.red-orange.min.css" />
   <link rel="stylesheet" href="./static/stylesheets/index.css" />
+
+  <script type="text/javascript" src="./static/scripts/qcavatar.js"></script>
+  <script type="text/javascript" src="./static/scripts/pagesupport.js"></script>
 </head>
 
 <body class="mdl-demo mdl-color--white-1000 mdl-color-text--black mdl-base">
   <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-    <header class="mdl-layout__header mdl-layout__header--scroll mdl-color--primary">
+    <header class="mdl-layout__header mdl-layout__header--scroll mdl-color--white">
       <div class="mdl-layout__header-row" id="message-card-header">
-        <img id="bot_icon" src="./static/img/boticon.png" height="30"><span id="bot_heading">Voice Bot</span>
-        <img id="menu_bar" src="./static/img/menu.png" height="30">
+        <img id="bot_icon" src="./static/img/Saudi_Aramco_Log.png" height="30"><span id="bot_heading"> IBM Watson Assistant Avatar PoC</span>
+        <img id="menu_bar" src="./static/img/menu.png" height="40">
       </div>
     </header>
-    <main class="mdl-layout__content mdl-color--white">
-      <div id="messages-card-container" class="mdl-cell mdl-cell--12-col mdl-grid">
-          <!-- Messages container -->
-        <div id="messages-card" class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--6-col-tablet mdl-cell--6-col-desktop">
-          <div class="mdl-card__supporting-text mdl-color-text--grey-600">
-            <div id="messages">
-            </div>
-            <div class="mdl-grid">
-              <div id="p2" class="mdl-cell mdl-cell--12-col mdl-cell-8-col-tablet mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>
-            </div>
 
-              <div  id="belowtext">
-                <ul id="recordingslist"></ul>
-              <form id="message-form" action="#">
-                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label parent" style="pointer-events:none">
-                  <input class="textfield__input" type="text" id="q" autocomplete="off">
-                  <img id="stt2" style="float:right;margin-top:-52px;pointer-events:all" src="./static/img/mic.gif" alt="disconnected" />
-                </div>
-              </form>
+    <main class="mdl-layout__content mdl-color--white">
+      <div class="relativeframe">
+        <div id="messages-card-container">
+          <iframe id="avatarframe" src="https://avatarstream.quantumcapture.com/avatar.htm" class="fullpage"></iframe>
+            <!-- Messages container -->
+          <div id="messages-card">
+            <div class="mdl-card__supporting-text mdl-color-text--grey-600">
+              <div id="messages">
               </div>
 
+                <div  id="belowtext">
+                  <ul id="recordingslist"></ul>
+                <form id="message-form" action="#">
+                  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label parent" style="pointer-events:none">
+                    <input class="textfield__input" type="text" id="q" autocomplete="off">
+                    <img id="stt2" style="float:right;margin-top:-52px;pointer-events:all" src="./static/img/mic.gif" alt="disconnected" />
+                  </div>
+                </form>
+                </div>
+
+            </div>
           </div>
         </div>
       </div>
-
     </main>
   </div>
   <p><audio id="audio" controls></audio></p>
