@@ -68,9 +68,59 @@ def getConvResponse():
                                  context=jsonContext)
 
     response = response.get_result()
-    reponseText = response["output"]["text"]
-    responseDetails = {'responseText': '... '.join(reponseText),
-                       'context': response["context"]}
+    print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+    print(response);
+    print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+    #reponseText = response["output"]["text"]
+    
+    print("----------------------------------------------------")    
+    reponseText = response["output"]["generic"][0]["text"]
+    print("reponseText")    
+    print(reponseText)
+    print("----------------------------------------------------")
+
+
+    responseDetails = ''
+
+    # no options
+    if (len(response["output"]["generic"]) == 1 ):       
+        responseDetails = {'responseText': reponseText ,
+                        'context': response["context"]}
+    else:
+        print("----------------------------------------------------")
+        text_title = response["output"]["generic"][1]["title"]
+        print("text_title")
+        print(text_title)
+        print("----------------------------------------------------")
+
+        print("----------------------------------------------------")
+        list_options = response["output"]["generic"][1]["options"]
+        print("list_options")
+        print(list_options)
+        print("----------------------------------------------------")
+        
+        #print("++++++++++++++++++++++++++++++++++++++++++++++++++")
+        #print (list_options[0]['label'])
+        #print (list_options[1]['label'])
+        #print (list_options[2]['label'])
+        #print (len(list_options))
+        #print("++++++++++++++++++++++++++++++++++++++++++++++++++")
+        
+        #print("----------------------------------------------------")
+
+
+        print("----------------------------------------------------")
+        labels = '<ul>'
+        for i in range(len(list_options)):
+            labels += '<li><div onclick="callConversation(\'' + list_options[i]["value"]["input"]["text"] + '\')"> ' + list_options[i]["label"] + '</div></li>'
+
+        labels += '</ul>'
+        print(labels)
+        print("----------------------------------------------------")
+
+        responseDetails = {'responseText': reponseText + '<div>' + text_title + labels + '</div>',
+                        'context': response["context"]}
+
     return jsonify(results=responseDetails)
 
 

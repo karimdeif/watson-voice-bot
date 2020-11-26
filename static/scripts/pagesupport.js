@@ -3,7 +3,20 @@
 
 // Some testing functions         
 function sendMessageToAvatar(message) {
-    QCAvatar.TriggerSpeechText(message);
+
+    let cleanText = '';
+    
+    console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+    console.log(message);    
+    console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+
+    cleanText = message.replace(/<\/?[^>]+(>|$)/g, "");
+
+    console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+    console.log(cleanText);    
+    console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+
+    QCAvatar.TriggerSpeechText(cleanText);
 }
 
 function SendWelcomeText() {
