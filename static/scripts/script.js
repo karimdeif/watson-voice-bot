@@ -1,8 +1,16 @@
 let conversationContext = '';
 let recorder;
 let context;
+let tmp_resp = '';
 
 function displayMsgDiv(str, who) {
+
+  /*
+  console.log('^^^^^^^^^^')
+  console.log(who)
+  console.log('^^^^^^^^^^')
+  */
+
   const time = new Date();
   let hours = time.getHours();
   let minutes = time.getMinutes();
@@ -15,7 +23,7 @@ function displayMsgDiv(str, who) {
   const strTime = hours + ':' + minutes;
   let msgHtml = "<div class='msg-card-wide mdl-card " + who + "'><div class='mdl-card__supporting-text'>";
   msgHtml += str;
-  msgHtml += "</div><div class='" + who + "-line'>" + strTime + '</div></div>';
+  //msgHtml += "</div><div class='" + who + "-line'>" + who + '</div></div>';
 
   $('#messages').append(msgHtml);
   $('#messages').scrollTop($('#messages')[0].scrollHeight);
@@ -43,8 +51,10 @@ $(document).ready(function() {
     .done(function(res) {
       conversationContext = res.results.context;
       //play(res.results.responseText);
-      sendMessageToAvatar(res.results.responseText);
-      displayMsgDiv(res.results.responseText, 'bot');
+      if(res.results.responseText != 'Welcome'){
+        sendMessageToAvatar(res.results.responseText);
+        displayMsgDiv(res.results.responseText, 'bot');
+      }
     })
     .fail(function(jqXHR, e) {
       console.log('Error: ' + jqXHR.responseText);
@@ -54,7 +64,27 @@ $(document).ready(function() {
     });
 });
 
+
+
+$("#q").keypress(function(event) { 
+    if (event.keyCode === 13) { 
+      tmp_resp = $('#q').val();
+      console.log('Clickeded with: ' + tmp_resp);
+      displayMsgDiv(tmp_resp, 'user');
+      callConversation(tmp_resp);      
+      //$('#q').val('');
+    } 
+}); 
+
+function callConversationFromOption(res, user) {
+  displayMsgDiv(res, user);
+  callConversation(res);  
+}
+
 function callConversation(res) {
+
+  console.log('callConversation with: ' + res);
+
   $('#q').attr('disabled', 'disabled');
 
   $.post('/api/conversation', {
@@ -170,8 +200,22 @@ function stopRecording(button) {
   recorder.clear();
 }
 
+function waitSeconds(iMilliSeconds) {
+  var counter= 0
+      , start = new Date().getTime()
+      , end = 0;
+  while (counter < iMilliSeconds) {
+      end = new Date().getTime();
+      counter = end - start;
+  }
+}
+
+
+
 window.onload = function init() {
   try {
+
+    
     // webkit shim
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
@@ -181,6 +225,31 @@ window.onload = function init() {
     context = new AudioContext();
     console.log('Audio context set up.');
     console.log('navigator.getUserMedia ' + (navigator.getUserMedia ? 'available.' : 'not present!'));
+
+    /*
+    document.addEventListener('click', function (event) {  
+    // Log the clicked element in the console
+    console.log(event.target);
+    }, false);
+    */
+
+   $('#avatarframe').on('load', function(){
+    //console.log("FRAME LOADED");
+    //console.log("BEFORE");
+    waitSeconds(4000);
+    SendWelcomeText();
+    console.log("AFTER");
+  });
+
+  $('#streamingVideo').on('load', function(){
+    console.log("VIDEO LOADED");
+  });
+
+
+  
+  //await new Promise(resolve => setTimeout(resolve, 5000)); // 3 sec  
+
+
   } catch (e) {
     alert('No web audio support in this browser!');
   }
@@ -195,3 +264,4 @@ window.onload = function init() {
     }
   );
 };
+

@@ -110,11 +110,14 @@ def getConvResponse():
 
 
         print("----------------------------------------------------")
-        labels = '<ul>'
+        #labels = '<ul>'
+        labels = ''
         for i in range(len(list_options)):
-            labels += '<li><div onclick="callConversation(\'' + list_options[i]["value"]["input"]["text"] + '\')"> ' + list_options[i]["label"] + '</div></li>'
+            #labels += '<li><div onclick="callConversationFromOption(\'' + list_options[i]["value"]["input"]["text"] + '\')"> ' + list_options[i]["label"] + '</div></li>'
+            labels += '<div class="mdl-list" onclick="callConversationFromOption(\'' + list_options[i]["value"]["input"]["text"] + '\' , \'user\')"> <u>' + list_options[i]["label"] + '</u></div>'
 
-        labels += '</ul>'
+        #labels += '</ul>'
+        print('labels')
         print(labels)
         print("----------------------------------------------------")
 
@@ -158,7 +161,7 @@ def getTextFromSpeech():
             content_type='audio/wav',
             timestamps=True,
             word_confidence=True,
-            smart_formatting=True).get_result()
+            smart_formatting=True, keywords=['aramco'] , keywords_threshold=0.1,  language_customization_id="36842222-c007-497d-ad2d-0b24267f201d").get_result()
 
     # Ask user to repeat if STT can't transcribe the speech
     if len(response['results']) < 1:

@@ -16,13 +16,49 @@ function sendMessageToAvatar(message) {
     console.log(cleanText);    
     console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
 
+    console.log('******************************');
+    //QCAvatar.TriggerGesture(QCAvatar.AvatarGestures.;
+
+    QCAvatar.StartBatch();
+    //QCAvatar.StartBatch();
+    if(cleanText.includes('Bye')){
+        console.log('Bye');
+        QCAvatar.TriggerGesture(QCAvatar.AvatarGestures.Wave_Mid_RHand);
+    }else{
+        QCAvatar.TriggerGesture(QCAvatar.AvatarGestures.Deictic_L_Mid_LHand);
+    }
+    
+    //QCAvatar.SetLookLocation(0.6,-0.7);
+    QCAvatar.SetLookingType(QCAvatar.AvatarLookingTypes.At_Camera);
     QCAvatar.TriggerSpeechText(cleanText);
+    
+    //QCAvatar.SendBatch();
+    QCAvatar.SendBatch();
+
 }
 
 function SendWelcomeText() {
+    let str = "Good Morning! I'm Z-ara, your IT Digital Assistant. How can I help you today?";
+    displayMsgDiv(str, 'bot');
     QCAvatar.StartBatch();
+    //QCAvatar.SetLookLocation(0.0,0.0);
+    //QCAvatar.SetLookingType(QCAvatar.AvatarLookingTypes.Exact_Coordinates);
+    QCAvatar.SetLookingType(QCAvatar.AvatarLookingTypes.At_Camera);
+    QCAvatar.SetEmotion(QCAvatar.AvatarEmotions.Happy1);
     QCAvatar.TriggerGesture(QCAvatar.AvatarGestures.Wave_Mid_RHand);
-    QCAvatar.TriggerSpeechText("Hello and welcome to the sample web page.");
+    //QCAvatar.SetLookLocation(0.6,-0.7);
+    //QCAvatar.SetLookingType(QCAvatar.AvatarLookingTypes.Around_Coordinates);
+    
+    //str = "Good Morning";
+    QCAvatar.TriggerSpeechText(str);
+
+    QCAvatar.SetLookLocation(0.0,0.0);
+    QCAvatar.SetLookingType(QCAvatar.AvatarLookingTypes.Exact_Coordinates);
+    QCAvatar.SetLookingType(QCAvatar.AvatarLookingTypes.At_Camera);
+    //str = "I'm Zara your IT Digital Assistant. How can I help you today?";
+    //QCAvatar.TriggerGesture(QCAvatar.AvatarGestures.Deictic_L_Up_RHand);
+    //QCAvatar.SetEmotion(QCAvatar.AvatarEmotions.None);
+    //QCAvatar.TriggerSpeechText(str);
     QCAvatar.SendBatch();
 }
 
