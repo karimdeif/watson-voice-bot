@@ -55,6 +55,13 @@ def before_request():
 def Welcome():
     return app.send_static_file('index.html')
 
+@app.route('/pdf')
+def Pdfs():
+    return app.send_static_file('saudi-aramco-ARA-2019-english.pdf')
+
+@app.route('/video')
+def Video():
+    return app.send_static_file('aramco-video.mp4')
 
 @app.route('/api/conversation', methods=['POST', 'GET'])
 def getConvResponse():
@@ -68,65 +75,67 @@ def getConvResponse():
                                  context=jsonContext)
 
     response = response.get_result()
-    print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
-    print(response);
-    print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
-    #reponseText = response["output"]["text"]
-    
-    print("----------------------------------------------------")    
-    reponseText = response["output"]["generic"][0]["text"]
-    print("reponseText")    
-    print(reponseText)
-    print("----------------------------------------------------")
-
 
     responseDetails = ''
 
-    # no options
-    if (len(response["output"]["generic"]) == 1 ):       
-        responseDetails = {'responseText': reponseText ,
-                        'context': response["context"]}
-    else:
-        print("----------------------------------------------------")
-        text_title = response["output"]["generic"][1]["title"]
-        print("text_title")
-        print(text_title)
-        print("----------------------------------------------------")
+    print("************************************************")
+    print(response)
+    print("************************************************")
 
-        print("----------------------------------------------------")
-        list_options = response["output"]["generic"][1]["options"]
-        print("list_options")
-        print(list_options)
-        print("----------------------------------------------------")
+    voiceResponse = ""
+    textResponse = ""
+    mediaResponse = ""
+
+
+    genericOutputList = response["output"]["generic"]
+ 
+    for i in range(len(genericOutputList)):
+
+        tmpList = genericOutputList[i]
         
-        #print("++++++++++++++++++++++++++++++++++++++++++++++++++")
-        #print (list_options[0]['label'])
-        #print (list_options[1]['label'])
-        #print (list_options[2]['label'])
-        #print (len(list_options))
-        #print("++++++++++++++++++++++++++++++++++++++++++++++++++")
-        
-        #print("----------------------------------------------------")
+        print("################################################")
+        print(tmpList)
+        print("################################################")
+
+        if(tmpList["response_type"]  == "text"): 
 
 
-        print("----------------------------------------------------")
-        #labels = '<ul>'
-        labels = ''
-        for i in range(len(list_options)):
-            #labels += '<li><div onclick="callConversationFromOption(\'' + list_options[i]["value"]["input"]["text"] + '\')"> ' + list_options[i]["label"] + '</div></li>'
-            labels += '<div class="mdl-list" onclick="callConversationFromOption(\'' + list_options[i]["value"]["input"]["text"] + '\' , \'user\')"> <u>' + list_options[i]["label"] + '</u></div>'
+            # text : voice
+            # text : text
+            # media: 
+            # options
+            if (i == 0):
+                voiceResponse += tmpList["text"] 
+            elif (i == 1):
+                textResponse += tmpList["text"] 
+            elif (i == 2):
+                mediaResponse += tmpList["text"] 
+            elif (i == 3):
+               voiceResponse += tmpList["text"]                                
+    
+        if(tmpList["response_type"]  == "option"): 
 
-        #labels += '</ul>'
-        print('labels')
-        print(labels)
-        print("----------------------------------------------------")
+            text_title = tmpList["title"]
+            list_options = tmpList["options"]
+            
+            labels = ''
 
-        responseDetails = {'responseText': reponseText + '<div>' + text_title + labels + '</div>',
-                        'context': response["context"]}
+            for i in range(len(list_options)):
+                #labels += '<li><div onclick="callConversationFromOption(\'' + list_options[i]["value"]["input"]["text"] + '\')"> ' + list_options[i]["label"] + '</div></li>'
+                labels += '<div class="mdl-list" onclick="callConversationFromOption(\'' + list_options[i]["value"]["input"]["text"] + '\' , \'user\')"> ' + list_options[i]["label"] + '</div>'
 
+            #labels += '</ul>'
+            print('labels')
+            print(labels)
+            print("----------------------------------------------------")
+
+            textResponse += '<div>' + text_title + labels + '</div>'
+
+
+    responseDetails = {'textResponse': textResponse , 'voiceResponse': voiceResponse, 'mediaResponse': mediaResponse,  'context': response["context"]}
     return jsonify(results=responseDetails)
 
-
+   
 #@app.route('/api/text-to-speech', methods=['POST'])
 def getSpeechFromText():
     inputText = request.form.get('text')
@@ -153,17 +162,23 @@ def getSpeechFromText():
 def getTextFromSpeech():
 
     sttService = SpeechToTextV1()
-    #print("############################################")
-    #print(request.get_data(cache=False))
-    #print("############################################")
+    print("############################################")
+    print("CONTENT-LENGTH=" + request.headers.get('Content-Length'))
+    print("############################################")
+
     response = sttService.recognize(
             audio=request.get_data(cache=False),
             content_type='audio/wav',
-            timestamps=True,
-            word_confidence=True,
-            smart_formatting=True, keywords=['aramco'] , keywords_threshold=0.1,  language_customization_id="36842222-c007-497d-ad2d-0b24267f201d").get_result()
+            timestamps=False,
+            word_confidence=False,
+            smart_formatting=True, keywords=['aramco'] , keywords_threshold=0.1, model = 'en-US_BroadbandModel',   language_customization_id="36842222-c007-497d-ad2d-0b24267f201d").get_result()
 
     # Ask user to repeat if STT can't transcribe the speech
+
+    print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
+    print('SPEECH TO TEXT RESPONSE')
+    print(response)
+    print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
     if len(response['results']) < 1:
         return Response(mimetype='plain/text',
                         response="Sorry, didn't get that. please try again!")

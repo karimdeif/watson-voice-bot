@@ -2,14 +2,60 @@ let conversationContext = '';
 let recorder;
 let context;
 let tmp_resp = '';
+let tmp_stt_response = '';
 
-function displayMsgDiv(str, who) {
+function displayMediaDiv(type, str) {
+
+  let msgHtml = '';
+
+  if(type == "video"){
+    msgHtml += '<video width="100%" height="100%" autoplay controls style="outline: none">'; 
+    msgHtml +='<source src="' + str + '" type="video/mp4">';
+    msgHtml += 'Your browser does not support the video tag.';
+    msgHtml += '</video>';
+  }else if(type == "pdf"){
+    msgHtml += '<embed src="' + str + '" type="application/pdf" width="100%" height="100%" />';
+  }
+  else if(type== "image"){
+    msgHtml += "<img src='"+ str +"' width='100%'' height='100%'' >";
+  } 
 
   /*
-  console.log('^^^^^^^^^^')
-  console.log(who)
-  console.log('^^^^^^^^^^')
+  msgHtml = '<iframe width="13-" height="100" src="' + str + '" ';
+  msgHtml+= 'frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" '; 
+  msgHtml+= 'allowfullscreen></iframe>';
   */
+
+  /*
+  msgHtml = '<iframe width="13-" height="100" src="https://www.youtube.com/embed/M7Go7aFCv9c?controls=0" ';
+  msgHtml+= 'frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" '; 
+  msgHtml+= 'allowfullscreen></iframe>';
+  */
+
+  /*
+  msgHtml= '<iframe width="130" height="100"';
+  msgHtml+= 'src="'+str+'">';
+  msgHtml+= '</iframe>';
+  */
+/*  
+  msgHtml= '<video width="320" height="240" controls>'; 
+  msgHtml+='<source src="movie.mp4" type="video/mp4">';
+  msgHtml+= '<source src="movie.ogg" type="video/ogg">';
+  msgHtml+= 'Your browser does not support the video tag.';
+  msgHtml+= '</video>';
+  */
+
+   
+  //msgHtml += str;
+  //msgHtml += "</div><div class='" + who + "-line'>" + who + '</div></div>';
+
+  console.log(msgHtml);
+  $('#media-messages').empty().append(msgHtml);
+  //$('#media-messages').scrollTop($('#media-messages')[0].scrollHeight);
+}
+
+
+function displayMsgDiv(str, who) {
 
   const time = new Date();
   let hours = time.getHours();
@@ -30,16 +76,16 @@ function displayMsgDiv(str, who) {
 
   if (who == 'user') {
     $('#q').val('');
-    $('#q').attr('disabled', 'disabled');
+    //$('#q').attr('disabled', 'disabled');
     $('#p2').fadeTo(500, 1);
   } else {
-    $('#q').removeAttr('disabled');
+    //$('#q').removeAttr('disabled');
     $('#p2').fadeTo(500, 0);
   }
 }
 
 $(document).ready(function() {
-  $('#q').attr('disabled', 'disabled');
+  //$('#q').attr('disabled', 'disabled');
   $('#p2').fadeTo(500, 1);
   $('#h').val('0');
 
@@ -51,13 +97,17 @@ $(document).ready(function() {
     .done(function(res) {
       conversationContext = res.results.context;
       //play(res.results.responseText);
-      if(res.results.responseText != 'Welcome'){
-        sendMessageToAvatar(res.results.responseText);
-        displayMsgDiv(res.results.responseText, 'bot');
+      if(!String(res.results.voiceResponse).includes('Welcome')){
+        sendMessageToAvatar(res.results.voiceResponse);
+        console.log("%%%%%%%%%%%%%%%%%%%%%%%");
+        console.log("AVATAR");
+        console.log(res.results.voiceResponse);
+        console.log("%%%%%%%%%%%%%%%%%%%%%%%");
+        displayMsgDiv(res.results.textResponse, 'bot');
       }
     })
     .fail(function(jqXHR, e) {
-      console.log('Error: ' + jqXHR.responseText);
+      console.log('Error: ' + jqXHR.textResponse);
     })
     .catch(function(error) {
       console.log(error);
@@ -71,7 +121,18 @@ $("#q").keypress(function(event) {
       tmp_resp = $('#q').val();
       console.log('Clickeded with: ' + tmp_resp);
       displayMsgDiv(tmp_resp, 'user');
-      callConversation(tmp_resp);      
+      if(tmp_resp.includes("video")){
+        displayMediaDiv("video","/video");
+      }else if(tmp_resp.includes("image")){
+        displayMediaDiv("image","https://argaamplus.s3.amazonaws.com/b663cbcc-99e8-4a30-96d3-72a0a6259a66.jpg");
+      }
+      else if(tmp_resp.includes("doc")){
+        displayMediaDiv("pdf","/pdf");
+      }
+      else{
+        callConversation(tmp_resp); 
+      }
+      event.preventDefault();
       //$('#q').val('');
     } 
 }); 
@@ -83,9 +144,11 @@ function callConversationFromOption(res, user) {
 
 function callConversation(res) {
 
+  $('#media-messages').empty();
+  
   console.log('callConversation with: ' + res);
 
-  $('#q').attr('disabled', 'disabled');
+ // $('#q').attr('disabled', 'disabled');
 
   $.post('/api/conversation', {
     convText: res,
@@ -94,11 +157,23 @@ function callConversation(res) {
     .done(function(res, status) {
       conversationContext = res.results.context;
       //play(res.results.responseText);
-      sendMessageToAvatar(res.results.responseText);
-      displayMsgDiv(res.results.responseText, 'bot');
+      sendMessageToAvatar(res.results.voiceResponse);
+      console.log("%%%%%%%%%%%%%%%%%%%%%%%");
+      console.log("AVATAR");
+      console.log(res.results.voiceResponse);
+      console.log("%%%%%%%%%%%%%%%%%%%%%%%");
+      displayMsgDiv(res.results.textResponse, 'bot');
+      
+      if((Object.keys(res.results.mediaResponse).length != 0 ) && String(res.results.mediaResponse) != " "){
+        console.log("********************************************");
+        console.log("mediaResponse=#"+res.results.mediaResponse + "#");
+        console.log("********************************************");
+        displayMediaDiv("video","/video");
+      }
+
     })
     .fail(function(jqXHR, e) {
-      console.log('Error: ' + jqXHR.responseText);
+      console.log('Error: ' + jqXHR.textResponse);
     });
 }
 
@@ -142,6 +217,11 @@ function play(inputText) {
 
 const recordMic = document.getElementById('stt2');
 recordMic.onclick = function() {
+
+  context.resume();
+  console.log("------------------------------------------------------------------------------");
+  console.log("AudioContext Resumed");
+  console.log("------------------------------------------------------------------------------");
   const fullPath = recordMic.src;
   const filename = fullPath.replace(/^.*[\\/]/, '');
   if (filename == 'mic.gif') {
@@ -183,19 +263,41 @@ function stopRecording(button) {
 
   recorder &&
     recorder.exportWAV(function(blob) {
+
+      console.log("%%%%%%%%%%%%%%%%%%%");
       console.log(blob);
+      console.log("%%%%%%%%%%%%%%%%%%%");
       const url = '/api/speech-to-text';
       const request = new XMLHttpRequest();
       request.open('POST', url, true);
+      request.setRequestHeader('Content-Length', blob.size);
       // request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
       // Decode asynchronously
       request.onload = function() {
-        callConversation(request.response);
-        displayMsgDiv(request.response, 'user');
+        tmp_stt_response = request.response; 
+        if(String(request.response).includes("video")){
+          displayMsgDiv(request.response, 'user');
+          displayMediaDiv("video","/video");
+        }else if(String(request.response).includes("image")){
+          displayMsgDiv(request.response, 'user');
+          displayMediaDiv("image","https://argaamplus.s3.amazonaws.com/b663cbcc-99e8-4a30-96d3-72a0a6259a66.jpg");
+        }
+        else if(String(request.response).includes("doc")){
+          displayMsgDiv(request.response, 'user');
+          displayMediaDiv("pdf","/pdf");
+        }else{
+          callConversation(request.response);
+          displayMsgDiv(request.response, 'user');
+        }
+
       };
       request.send(blob);
     });
+
+  console.log("#################### SPEECH TO TEXT ###################################3");
+  console.log(tmp_stt_response);
+  console.log("#################### SPEECH TO TEXT ###################################3");
 
   recorder.clear();
 }

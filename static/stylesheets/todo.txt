@@ -1,0 +1,50 @@
+video only in cloud print
+left align user and bot
+avatar head lower in the frame
+
+
+671788
+720940
+-----------
+770092
+786476
+
+
+good local
+868396
+
+
+remote now working
+983084
+
+
+
+
+
+
+next release - smaller avatar - to quantum
+
+
+
+done - circular corners for input text
+make corners more steep
+
+space ontop of her head, parallel with the first chat
+done - videos, pdfs, and images same as layoout provided
+
+ add in WA for pdf and images, need to know the node locations for the demo
+
+emotion surprise when avatar doesnt understand the question
+
+
+done - remove "VOICE" "TEXT" from dialogs
+done - add chitchat dialogs
+
+
+waiting for Ahmed - get videos from box
+
+
+ support all browsers.
+ fixed page reload.
+
+

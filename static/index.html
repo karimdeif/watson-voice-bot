@@ -44,8 +44,15 @@
     <main class="mdl-layout__content mdl-color--white">
       <div class="relativeframe">
         <div id="messages-card-container">
-          <iframe id="avatarframe" src="https://avatarstream.quantumcapture.com/avatar.htm" class="fullpage"></iframe>
-            <!-- Messages container -->
+          <iframe id="avatarframe" src="https://avatarstream.quantumcapture.com/avatar.htm" allow="autoplay; camera" class="fullpage"></iframe>
+
+          <div id="media-messages-card">
+            <div class="mdl-card__supporting-text mdl-color-text--grey-600">
+              <div id="media-messages">
+              </div>
+            </div>
+          </div>
+
           <div id="messages-card">
             <div class="mdl-card__supporting-text mdl-color-text--grey-600">
               <div id="messages">
@@ -63,6 +70,8 @@
 
             </div>
           </div>
+
+
         </div>
       </div>
     </main>
