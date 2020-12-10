@@ -406,5 +406,15 @@ main {
   filter: drop-shadow(2px 4px 6px black);
 }
 .send-icon {
-  margin-top: -10px;
+  background-image: url("../../static/img/sendicon.svg");
+  margin-top: -10px !important;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+  border: 0px;
+  cursor: pointer;
+}
+.last-text {
+  margin-top: 5px;
+  margin-bottom: 5px;
 }

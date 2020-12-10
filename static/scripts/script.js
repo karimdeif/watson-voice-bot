@@ -139,15 +139,30 @@ $("#q").keypress(function(event) {
     //$('#q').val('');
   }
 });
-function clickColorChange() {
-  $(".mdl-list").on("click", function() {
-    $(this).css("background", "#007aa8");
-    $(this).css("color", "#fff");
-  });
-}
+$("#sendbtn").on("click", function(event) {
+  tmp_resp = $("#q").val();
+  console.log("Clickeded with: " + tmp_resp);
+  displayMsgDiv(tmp_resp, "user");
+  if (tmp_resp.includes("video")) {
+    displayMediaDiv("video", "/video");
+  } else if (tmp_resp.includes("image")) {
+    displayMediaDiv(
+      "image",
+      "https://argaamplus.s3.amazonaws.com/b663cbcc-99e8-4a30-96d3-72a0a6259a66.jpg"
+    );
+  } else if (tmp_resp.includes("doc")) {
+    displayMediaDiv("pdf", "/pdf");
+  } else {
+    callConversation(tmp_resp);
+  }
+  event.preventDefault();
+  //$('#q').val('');
+});
 
 function callConversationFromOption(res, user) {
-  clickColorChange();
+  $(document).on("click", ".mdl-list", function(event) {
+    $(this).addClass("active");
+  });
   displayMsgDiv(res, user);
   callConversation(res);
 }

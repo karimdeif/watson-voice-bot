@@ -119,7 +119,7 @@ def getConvResponse():
             list_options = tmpList["options"]
             
             labels = ''
-
+            
             for i in range(len(list_options)):
                 #labels += '<li><div onclick="callConversationFromOption(\'' + list_options[i]["value"]["input"]["text"] + '\')"> ' + list_options[i]["label"] + '</div></li>'
                 labels += '<div class="mdl-list" onclick="callConversationFromOption(\'' + list_options[i]["value"]["input"]["text"] + '\' , \'user\')"> ' + list_options[i]["label"] + '</div>'
@@ -129,7 +129,7 @@ def getConvResponse():
             print(labels)
             print("----------------------------------------------------")
 
-            textResponse += '<div>' + text_title + 'div class=""' + labels +'</div>' + '</div>'
+            textResponse +=  '<div class="last-text">' + text_title + '</div>' + '<div class="buttons-cont">' +  labels + '</div>'
 
 
     responseDetails = {'textResponse': textResponse , 'voiceResponse': voiceResponse, 'mediaResponse': mediaResponse,  'context': response["context"]}
