@@ -194,7 +194,7 @@ main {
   padding-right: 10px;
   padding-left: 10px;
   min-width: 30px;
-  text-align: left;
+  text-align: center;
 }
 .mdl-list:hover {
   cursor: pointer;
