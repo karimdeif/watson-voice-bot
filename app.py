@@ -129,7 +129,7 @@ def getConvResponse():
             print(labels)
             print("----------------------------------------------------")
 
-            textResponse += '<div>' + text_title + labels + '</div>'
+            textResponse += '<div>' + text_title + 'div class=""' + labels +'</div>' + '</div>'
 
 
     responseDetails = {'textResponse': textResponse , 'voiceResponse': voiceResponse, 'mediaResponse': mediaResponse,  'context': response["context"]}

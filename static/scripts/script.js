@@ -1,24 +1,26 @@
-let conversationContext = '';
+let conversationContext = "";
 let recorder;
 let context;
-let tmp_resp = '';
-let tmp_stt_response = '';
+let tmp_resp = "";
+let tmp_stt_response = "";
 
 function displayMediaDiv(type, str) {
+  let msgHtml = "";
 
-  let msgHtml = '';
-
-  if(type == "video"){
-    msgHtml += '<video width="100%" height="100%" autoplay controls style="outline: none">'; 
-    msgHtml +='<source src="' + str + '" type="video/mp4">';
-    msgHtml += 'Your browser does not support the video tag.';
-    msgHtml += '</video>';
-  }else if(type == "pdf"){
-    msgHtml += '<embed src="' + str + '" type="application/pdf" width="100%" height="100%" />';
+  if (type == "video") {
+    msgHtml +=
+      '<video width="100%" height="100%" autoplay controls style="outline: none">';
+    msgHtml += '<source src="' + str + '" type="video/mp4">';
+    msgHtml += "Your browser does not support the video tag.";
+    msgHtml += "</video>";
+  } else if (type == "pdf") {
+    msgHtml +=
+      '<embed src="' +
+      str +
+      '" type="application/pdf" width="100%" height="100%" />';
+  } else if (type == "image") {
+    msgHtml += "<img src='" + str + "' width='100%'' height='100%'' >";
   }
-  else if(type== "image"){
-    msgHtml += "<img src='"+ str +"' width='100%'' height='100%'' >";
-  } 
 
   /*
   msgHtml = '<iframe width="13-" height="100" src="' + str + '" ';
@@ -37,7 +39,7 @@ function displayMediaDiv(type, str) {
   msgHtml+= 'src="'+str+'">';
   msgHtml+= '</iframe>';
   */
-/*  
+  /*  
   msgHtml= '<video width="320" height="240" controls>'; 
   msgHtml+='<source src="movie.mp4" type="video/mp4">';
   msgHtml+= '<source src="movie.ogg" type="video/ogg">';
@@ -45,114 +47,121 @@ function displayMediaDiv(type, str) {
   msgHtml+= '</video>';
   */
 
-   
   //msgHtml += str;
   //msgHtml += "</div><div class='" + who + "-line'>" + who + '</div></div>';
 
   console.log(msgHtml);
-  $('#media-messages').empty().append(msgHtml);
+  $("#media-messages")
+    .empty()
+    .append(msgHtml);
   //$('#media-messages').scrollTop($('#media-messages')[0].scrollHeight);
 }
 
-
 function displayMsgDiv(str, who) {
-
   const time = new Date();
   let hours = time.getHours();
   let minutes = time.getMinutes();
   //const ampm = hours >= 12 ? 'pm' : 'am';
   //hours = hours % 12;
   //hours = hours ? hours : 12; // the hour "0" should be "12"
-  hours = hours < 10 ? '0' + hours : hours;
-  minutes = minutes < 10 ? '0' + minutes : minutes;
+  hours = hours < 10 ? "0" + hours : hours;
+  minutes = minutes < 10 ? "0" + minutes : minutes;
   //const strTime = hours + ':' + minutes + ' ' + ampm;
-  const strTime = hours + ':' + minutes;
-  let msgHtml = "<div class='msg-card-wide mdl-card " + who + "'><div class='mdl-card__supporting-text'>";
+  const strTime = hours + ":" + minutes;
+  let msgHtml =
+    "<div class='msg-card-wide mdl-card " +
+    who +
+    "'><div class='mdl-card__supporting-text'>";
   msgHtml += str;
   //msgHtml += "</div><div class='" + who + "-line'>" + who + '</div></div>';
 
-  $('#messages').append(msgHtml);
-  $('#messages').scrollTop($('#messages')[0].scrollHeight);
+  $("#messages").append(msgHtml);
+  $("#messages").scrollTop($("#messages")[0].scrollHeight);
 
-  if (who == 'user') {
-    $('#q').val('');
+  if (who == "user") {
+    $("#q").val("");
     //$('#q').attr('disabled', 'disabled');
-    $('#p2').fadeTo(500, 1);
+    $("#p2").fadeTo(500, 1);
   } else {
     //$('#q').removeAttr('disabled');
-    $('#p2').fadeTo(500, 0);
+    $("#p2").fadeTo(500, 0);
   }
 }
 
 $(document).ready(function() {
   //$('#q').attr('disabled', 'disabled');
-  $('#p2').fadeTo(500, 1);
-  $('#h').val('0');
+  $("#p2").fadeTo(500, 1);
+  $("#h").val("0");
 
   $.ajax({
-    url: '/api/conversation',
-    convText: '',
-    context: ''
+    url: "/api/conversation",
+    convText: "",
+    context: "",
   })
     .done(function(res) {
       conversationContext = res.results.context;
       //play(res.results.responseText);
-      if(!String(res.results.voiceResponse).includes('Welcome')){
+      if (!String(res.results.voiceResponse).includes("Welcome")) {
         sendMessageToAvatar(res.results.voiceResponse);
         console.log("%%%%%%%%%%%%%%%%%%%%%%%");
         console.log("AVATAR");
         console.log(res.results.voiceResponse);
         console.log("%%%%%%%%%%%%%%%%%%%%%%%");
-        displayMsgDiv(res.results.textResponse, 'bot');
+        displayMsgDiv(res.results.textResponse, "bot");
       }
     })
     .fail(function(jqXHR, e) {
-      console.log('Error: ' + jqXHR.textResponse);
+      console.log("Error: " + jqXHR.textResponse);
     })
     .catch(function(error) {
       console.log(error);
     });
 });
 
-
-
-$("#q").keypress(function(event) { 
-    if (event.keyCode === 13) { 
-      tmp_resp = $('#q').val();
-      console.log('Clickeded with: ' + tmp_resp);
-      displayMsgDiv(tmp_resp, 'user');
-      if(tmp_resp.includes("video")){
-        displayMediaDiv("video","/video");
-      }else if(tmp_resp.includes("image")){
-        displayMediaDiv("image","https://argaamplus.s3.amazonaws.com/b663cbcc-99e8-4a30-96d3-72a0a6259a66.jpg");
-      }
-      else if(tmp_resp.includes("doc")){
-        displayMediaDiv("pdf","/pdf");
-      }
-      else{
-        callConversation(tmp_resp); 
-      }
-      event.preventDefault();
-      //$('#q').val('');
-    } 
-}); 
+$("#q").keypress(function(event) {
+  if (event.keyCode === 13) {
+    tmp_resp = $("#q").val();
+    console.log("Clickeded with: " + tmp_resp);
+    displayMsgDiv(tmp_resp, "user");
+    if (tmp_resp.includes("video")) {
+      displayMediaDiv("video", "/video");
+    } else if (tmp_resp.includes("image")) {
+      displayMediaDiv(
+        "image",
+        "https://argaamplus.s3.amazonaws.com/b663cbcc-99e8-4a30-96d3-72a0a6259a66.jpg"
+      );
+    } else if (tmp_resp.includes("doc")) {
+      displayMediaDiv("pdf", "/pdf");
+    } else {
+      callConversation(tmp_resp);
+    }
+    event.preventDefault();
+    //$('#q').val('');
+  }
+});
+function clickColorChange() {
+  $(".mdl-list").on("click", function() {
+    $(this).css("background", "#007aa8");
+    $(this).css("color", "#fff");
+  });
+}
 
 function callConversationFromOption(res, user) {
+  clickColorChange();
   displayMsgDiv(res, user);
-  callConversation(res);  
+  callConversation(res);
 }
 
 function callConversation(res) {
+  $("#media-messages").empty();
 
-  $('#media-messages').empty();
-  
-  console.log('callConversation with: ' + res);
+  console.log("callConversation with: " + res);
 
- // $('#q').attr('disabled', 'disabled');
+  // $('#q').attr('disabled', 'disabled');
 
-  $.post('/api/conversation', {
+  $.post("/api/conversation", {
     convText: res,
-    context: JSON.stringify(conversationContext)
+    context: JSON.stringify(conversationContext),
   })
     .done(function(res, status) {
       conversationContext = res.results.context;
@@ -162,32 +171,33 @@ function callConversation(res) {
       console.log("AVATAR");
       console.log(res.results.voiceResponse);
       console.log("%%%%%%%%%%%%%%%%%%%%%%%");
-      displayMsgDiv(res.results.textResponse, 'bot');
-      
-      if((Object.keys(res.results.mediaResponse).length != 0 ) && String(res.results.mediaResponse) != " "){
-        console.log("********************************************");
-        console.log("mediaResponse=#"+res.results.mediaResponse + "#");
-        console.log("********************************************");
-        displayMediaDiv("video","/video");
-      }
+      displayMsgDiv(res.results.textResponse, "bot");
 
+      if (
+        Object.keys(res.results.mediaResponse).length != 0 &&
+        String(res.results.mediaResponse) != " "
+      ) {
+        console.log("********************************************");
+        console.log("mediaResponse=#" + res.results.mediaResponse + "#");
+        console.log("********************************************");
+        displayMediaDiv("video", "/video");
+      }
     })
     .fail(function(jqXHR, e) {
-      console.log('Error: ' + jqXHR.textResponse);
+      console.log("Error: " + jqXHR.textResponse);
     });
 }
 
 function play(inputText) {
   let buf;
 
-  
-  const url = '/api/text-to-speech';
-  const params = 'text=' + inputText;
+  const url = "/api/text-to-speech";
+  const params = "text=" + inputText;
   const request = new XMLHttpRequest();
-  request.open('POST', url, true);
-  request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-  request.responseType = 'arraybuffer';
-  
+  request.open("POST", url, true);
+  request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  request.responseType = "arraybuffer";
+
   // Decode asynchronously
   request.onload = function() {
     context.decodeAudioData(
@@ -197,7 +207,7 @@ function play(inputText) {
         play();
       },
       function(error) {
-        console.error('decodeAudioData error', error);
+        console.error("decodeAudioData error", error);
       }
     );
   };
@@ -215,118 +225,125 @@ function play(inputText) {
   }
 }
 
-const recordMic = document.getElementById('stt2');
+const recordMic = document.getElementById("stt2");
 recordMic.onclick = function() {
-
   context.resume();
-  console.log("------------------------------------------------------------------------------");
+  console.log(
+    "------------------------------------------------------------------------------"
+  );
   console.log("AudioContext Resumed");
-  console.log("------------------------------------------------------------------------------");
+  console.log(
+    "------------------------------------------------------------------------------"
+  );
   const fullPath = recordMic.src;
-  const filename = fullPath.replace(/^.*[\\/]/, '');
-  if (filename == 'mic.gif') {
+  const filename = fullPath.replace(/^.*[\\/]/, "");
+  if (filename == "mic.gif") {
     try {
-      recordMic.src = './static/img/mic_active.png';
+      recordMic.src = "./static/img/mic_active.png";
       startRecording();
       //console.log('recorder started');
-      $('#q').val('I am listening ...');
+      $("#q").val("I am listening ...");
     } catch (ex) {
       // console.log("Recognizer error .....");
     }
   } else {
     stopRecording();
-    $('#q').val('');
-    recordMic.src = './static/img/mic.gif';
+    $("#q").val("");
+    recordMic.src = "./static/img/mic.gif";
   }
 };
 
 function startUserMedia(stream) {
   const input = context.createMediaStreamSource(stream);
-  console.log('Media stream created.');
+  console.log("Media stream created.");
   // Uncomment if you want the audio to feedback directly
   // input.connect(audio_context.destination);
   // console.log('Input connected to audio context destination.');
 
   // eslint-disable-next-line
   recorder = new Recorder(input);
-  console.log('Recorder initialised.');
+  console.log("Recorder initialised.");
 }
 
 function startRecording(button) {
   recorder && recorder.record();
-  console.log('Recording...');
+  console.log("Recording...");
 }
 
 function stopRecording(button) {
   recorder && recorder.stop();
-  console.log('Stopped recording.');
+  console.log("Stopped recording.");
 
   recorder &&
     recorder.exportWAV(function(blob) {
-
       console.log("%%%%%%%%%%%%%%%%%%%");
       console.log(blob);
       console.log("%%%%%%%%%%%%%%%%%%%");
-      const url = '/api/speech-to-text';
+      const url = "/api/speech-to-text";
       const request = new XMLHttpRequest();
-      request.open('POST', url, true);
-      request.setRequestHeader('Content-Length', blob.size);
+      request.open("POST", url, true);
+      request.setRequestHeader("Content-Length", blob.size);
       // request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
       // Decode asynchronously
       request.onload = function() {
-        tmp_stt_response = request.response; 
-        if(String(request.response).includes("video")){
-          displayMsgDiv(request.response, 'user');
-          displayMediaDiv("video","/video");
-        }else if(String(request.response).includes("image")){
-          displayMsgDiv(request.response, 'user');
-          displayMediaDiv("image","https://argaamplus.s3.amazonaws.com/b663cbcc-99e8-4a30-96d3-72a0a6259a66.jpg");
-        }
-        else if(String(request.response).includes("doc")){
-          displayMsgDiv(request.response, 'user');
-          displayMediaDiv("pdf","/pdf");
-        }else{
+        tmp_stt_response = request.response;
+        if (String(request.response).includes("video")) {
+          displayMsgDiv(request.response, "user");
+          displayMediaDiv("video", "/video");
+        } else if (String(request.response).includes("image")) {
+          displayMsgDiv(request.response, "user");
+          displayMediaDiv(
+            "image",
+            "https://argaamplus.s3.amazonaws.com/b663cbcc-99e8-4a30-96d3-72a0a6259a66.jpg"
+          );
+        } else if (String(request.response).includes("doc")) {
+          displayMsgDiv(request.response, "user");
+          displayMediaDiv("pdf", "/pdf");
+        } else {
           callConversation(request.response);
-          displayMsgDiv(request.response, 'user');
+          displayMsgDiv(request.response, "user");
         }
-
       };
       request.send(blob);
     });
 
-  console.log("#################### SPEECH TO TEXT ###################################3");
+  console.log(
+    "#################### SPEECH TO TEXT ###################################3"
+  );
   console.log(tmp_stt_response);
-  console.log("#################### SPEECH TO TEXT ###################################3");
+  console.log(
+    "#################### SPEECH TO TEXT ###################################3"
+  );
 
   recorder.clear();
 }
 
 function waitSeconds(iMilliSeconds) {
-  var counter= 0
-      , start = new Date().getTime()
-      , end = 0;
+  var counter = 0,
+    start = new Date().getTime(),
+    end = 0;
   while (counter < iMilliSeconds) {
-      end = new Date().getTime();
-      counter = end - start;
+    end = new Date().getTime();
+    counter = end - start;
   }
 }
 
-
-
 window.onload = function init() {
   try {
-
-    
     // webkit shim
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
-    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
+    navigator.getUserMedia =
+      navigator.getUserMedia || navigator.webkitGetUserMedia;
     // eslint-disable-next-line
     window.URL = window.URL || window.webkitURL;
 
     context = new AudioContext();
-    console.log('Audio context set up.');
-    console.log('navigator.getUserMedia ' + (navigator.getUserMedia ? 'available.' : 'not present!'));
+    console.log("Audio context set up.");
+    console.log(
+      "navigator.getUserMedia " +
+        (navigator.getUserMedia ? "available." : "not present!")
+    );
 
     /*
     document.addEventListener('click', function (event) {  
@@ -335,35 +352,30 @@ window.onload = function init() {
     }, false);
     */
 
-   $('#avatarframe').on('load', function(){
-    //console.log("FRAME LOADED");
-    //console.log("BEFORE");
-    waitSeconds(4000);
-    SendWelcomeText();
-    console.log("AFTER");
-  });
+    $("#avatarframe").on("load", function() {
+      //console.log("FRAME LOADED");
+      //console.log("BEFORE");
+      waitSeconds(4000);
+      SendWelcomeText();
+      console.log("AFTER");
+    });
 
-  $('#streamingVideo').on('load', function(){
-    console.log("VIDEO LOADED");
-  });
+    $("#streamingVideo").on("load", function() {
+      console.log("VIDEO LOADED");
+    });
 
-
-  
-  //await new Promise(resolve => setTimeout(resolve, 5000)); // 3 sec  
-
-
+    //await new Promise(resolve => setTimeout(resolve, 5000)); // 3 sec
   } catch (e) {
-    alert('No web audio support in this browser!');
+    alert("No web audio support in this browser!");
   }
 
   navigator.getUserMedia(
     {
-      audio: true
+      audio: true,
     },
     startUserMedia,
     function(e) {
-      console.log('No live audio input: ' + e);
+      console.log("No live audio input: " + e);
     }
   );
 };
-
