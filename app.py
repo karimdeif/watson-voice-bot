@@ -18,7 +18,7 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, Response
 from flask import jsonify
-from flask import request, redirect
+from flask import request, redirect, flash, render_template, request, session, abort
 from flask_socketio import SocketIO
 from flask_cors import CORS
 from ibm_watson import AssistantV1
@@ -52,8 +52,27 @@ def before_request():
 
 
 @app.route('/')
-def Welcome():
-    return app.send_static_file('index.html')
+def home():
+    if not session.get('logged_in'):
+        return render_template('login.html')
+    else:
+        return render_template('index.html')
+
+@app.route('/login', methods=['POST'])
+def login():
+    if request.form['username'] == 'aramco' and request.form['password'] == 'aramco99':
+        print("LOGIN SUCCESSFULL")
+        session['logged_in'] = True
+        return render_template('index.html')
+    else:
+        print("LOGIN FAILURE")
+        flash('wrong password!')
+        return home()
+
+@app.route("/logout")
+def logout():
+    session['logged_in'] = False
+    return home()        
 
 @app.route('/pdf')
 def Pdfs():
@@ -157,7 +176,6 @@ def getSpeechFromText():
 
     return Response(response=generate(), mimetype="audio/x-wav")
 
-
 @app.route('/api/speech-to-text', methods=['POST'])
 def getTextFromSpeech():
 
@@ -190,6 +208,7 @@ def getTextFromSpeech():
 
 port = os.environ.get("PORT") or os.environ.get("VCAP_APP_PORT") or 5000
 if __name__ == "__main__":
+    app.secret_key = os.urandom(12)
     load_dotenv()
 
     # SDK is currently confused. Only sees 'conversation' for CloudFoundry.

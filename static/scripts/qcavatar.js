@@ -11,7 +11,7 @@ var QCAvatar = QCAvatar || {};
  * @constant
  * @default
  */
-QCAvatar.VERSION = "0.2";
+QCAvatar.VERSION = "0.5";
 
 /**
  * The iframe ID that contains the avatar
@@ -177,9 +177,9 @@ QCAvatar.VoiceGenders = {
  * @enum {string}
  */
 QCAvatar.CameraLocations = {
-    Full_Body: "Full_Body",
-    Upper_Body: "Upper_Body",
-    Close_Up: "Close_Up"
+    Avatar_On_Left: "Avatar_On_Left",
+    Avatar_In_Center: "Avatar_In_Center",
+    Avatar_On_Right: "Avatar_On_Right"
 };
 
 /**
@@ -191,6 +191,53 @@ QCAvatar.Backgrounds = {
     Color_Blue1: "Color_Blue1",
     Color_Green1: "Color_Green1",
     Color_Red1: "Color_Red1"
+};
+
+//-----------------------------------------------------------------------------
+
+/**
+ * Use window.addEventListener() with this custom event name to receive events from the
+ * avatar frame. These events' details are JSON objects with a 'name' property of the type {@link QCAvatar.AvatarEventTypes}.
+ * @example
+ * window.addEventListener(QCAvatar.AVATAR_EVENT_NAME, (event) => {
+ *    HandleEventFromAvatar(event.detail);
+ * }, false);
+ * 
+ * function HandleEventFromAvatar(data) {
+ *     switch(data.name)
+ *     {
+ *         case QCAvatar.AvatarEventTypes.Data_Channel_Open:
+ *             console.log("*** COMMANDS MAY BE SENT TO THE AVATAR ***");
+ *             break;
+ * 
+ *         case QCAvatar.AvatarEventTypes.Data_Channel_Closed:
+ *             console.log("*** COMMANDS CANNOT BE SENT TO THE AVATAR ***");
+ *             break;
+ * 
+ *         case QCAvatar.AvatarEventTypes.Video_Connected:
+ *             console.log("*** AVATAR VIDEO IS PLAYING ***");
+ *             break;
+ *     }
+ * }
+ * @see {@link QCAvatar.AvatarEventTypes} for the list of possible event types that may be listened for
+ * @constant
+ * @default
+ */
+QCAvatar.AVATAR_EVENT_NAME = "avatarEvent";
+
+/**
+ * Avatar event types used by the {@link QCAvatar.AVATAR_EVENT_NAME} custom events.
+ * @see {@link QCAvatar.AVATAR_EVENT_NAME} from an example of usage
+ * @readonly
+ * @enum {string}
+ */
+QCAvatar.AvatarEventTypes = {
+    /** Indicates that the data channel is available to send commands to the avatar server */
+    Data_Channel_Open: "Data_Channel_Open",
+    /** The data channel to the avatar server has been closed, and commands may not be sent */
+    Data_Channel_Closed: "Data_Channel_Closed",
+    /** The avatar video has been connected and is playing. Also implies that the data channel is open. */
+    Video_Connected: "Video_Connected"
 };
 
 //-----------------------------------------------------------------------------
@@ -434,15 +481,18 @@ QCAvatar.TriggerSpeechText = function(SpeechText) {
 /**
  * Set the camera location that is viewing the avatar
  * @param {QCAvatar.CameraLocations} NewCameraLocation 
+ * @param {float} Speed - Time in seconds to change location. 0 is instant.
  */
-QCAvatar.SetCameraLocation = function(NewCameraLocation) {
+QCAvatar.SetCameraLocation = function(NewCameraLocation, Speed) {
     //document.getElementById(QCAvatar.AVATAR_FRAME_ID).contentWindow.SendCameraLocation(NewCameraLocation);
 
     let message = {
         Command: "SendCameraLocation",
-        Location: ""
+        Location: "",
+        Speed: 0.0
     };
     message.Location = NewCameraLocation;
+    message.Speed = Speed;
 
     document.getElementById(QCAvatar.AVATAR_FRAME_ID).contentWindow.postMessage(message, "*");
 }
@@ -459,6 +509,20 @@ QCAvatar.SetBackground = function(NewBackground) {
         Background: ""
     };
     message.Background = NewBackground;
+
+    document.getElementById(QCAvatar.AVATAR_FRAME_ID).contentWindow.postMessage(message, "*");
+}
+
+//-----------------------------------------------------------------------------
+
+/**
+ * Request that the avatar video stream should begin playing. This is equivalent to the player clicking on 
+ * the play button within the avatar's iframe.
+ */
+QCAvatar.StartAvatarVideo = function() {
+    let message = {
+        Command: "StartAvatarVideo"
+    };
 
     document.getElementById(QCAvatar.AVATAR_FRAME_ID).contentWindow.postMessage(message, "*");
 }
@@ -491,3 +555,71 @@ QCAvatar.SendBatch = function() {
 
     document.getElementById(QCAvatar.AVATAR_FRAME_ID).contentWindow.postMessage(message, "*");
 }
+
+//-----------------------------------------------------------------------------
+
+QCAvatar.Init = function() {
+    window.addEventListener("message", (event) => {
+        QCAvatar.HandleAvatarMessage(event.data);
+    }, false);
+}
+
+QCAvatar.HandleAvatarMessage = function (data) {
+    switch(data.AvatarEvent) {
+        case "FrameLoaded":
+            //console.log("*** FRAME LOADED");
+            break;
+
+        case "VideoConnected":
+            {
+                //console.log("*** VIDEO CONNECTED");
+
+                let avatarEvent = new CustomEvent(QCAvatar.AVATAR_EVENT_NAME, {
+                    detail: {
+                        name: QCAvatar.AvatarEventTypes.Video_Connected
+                    }
+                });
+                
+                window.dispatchEvent(avatarEvent);
+            }
+            break;
+
+        case "WebSocketOpen":
+            //console.log("*** WEB SOCKET OPEN");
+            break;
+    
+        case "WebSocketClosed":
+            //console.log("*** WEB SOCKET CLOSED");
+            break;
+
+        case "DataChannelOpen":
+            {
+                //console.log("*** DATA CHANNEL OPEN");
+
+                let avatarEvent = new CustomEvent(QCAvatar.AVATAR_EVENT_NAME, {
+                    detail: {
+                        name: QCAvatar.AvatarEventTypes.Data_Channel_Open
+                    }
+                });
+                
+                window.dispatchEvent(avatarEvent);
+            }
+            break;
+
+        case "DataChannelClosed":
+            {
+                //console.log("*** DATA CHANNEL CLOSED");
+
+                let avatarEvent = new CustomEvent(QCAvatar.AVATAR_EVENT_NAME, {
+                    detail: {
+                        name: QCAvatar.AvatarEventTypes.Data_Channel_Closed
+                    }
+                });
+                
+                window.dispatchEvent(avatarEvent);
+            }
+            break;
+    }
+}
+
+window.addEventListener('DOMContentLoaded', QCAvatar.Init, false);

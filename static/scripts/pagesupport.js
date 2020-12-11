@@ -1,13 +1,26 @@
 // Copyright Quantum Capture Inc.  All rights reserved.
-"use strict";
+'use strict';
+
+// Some testing functions
+
+// Called when the body is loaded
+function InitPage() {
+    // Display the dialog if we haven't been told not to
+    const urlParams = new URLSearchParams(window.location.search);
+    if(!urlParams.has('DoNotDisplayDialog')) {
+        $('#sampleStartModal').modal({
+            keyboard: false,
+            backdrop: 'static'
+          });
+    }
+}
 
 // Some testing functions
 function sendMessageToAvatar(message) {
   let cleanText = "";
 
-  console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+  console.log("sendMessageToAvatar");
   console.log(message);
-  console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
 
   cleanText = message.replace(/<\/?[^>]+(>|$)/g, "");
 
@@ -15,10 +28,11 @@ function sendMessageToAvatar(message) {
   console.log(cleanText);
   console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
 
-  console.log("******************************");
-  //QCAvatar.TriggerGesture(QCAvatar.AvatarGestures.;
-
   QCAvatar.StartBatch();
+  console.log("setting avatar position to left");
+  console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+  QCAvatar.SetCameraLocation(QCAvatar.CameraLocations.Avatar_On_Left, 1.0);
+
   //QCAvatar.StartBatch();
   if (cleanText.includes("Bye")) {
     console.log("Bye");
@@ -132,3 +146,55 @@ function SetOliviaVoice() {
   QCAvatar.SetVoiceIndex(5);
   QCAvatar.SendBatch();
 }
+
+function AvatarStartVideo() {
+  QCAvatar.StartBatch();
+  QCAvatar.SetCameraLocation(QCAvatar.CameraLocations.Avatar_In_Center, 1.0);
+  QCAvatar.SendBatch();
+}
+
+//-----------------------------------------------------------------------------
+// Support for avatar events
+
+window.addEventListener(QCAvatar.AVATAR_EVENT_NAME, (event) => {
+  HandleEventFromAvatar(event.detail);
+}, false);
+
+function HandleEventFromAvatar(data) {
+  switch(data.name)
+  {
+      case QCAvatar.AvatarEventTypes.Data_Channel_Open:
+          {
+              console.log("*** COMMANDS MAY BE SENT TO THE AVATAR ***");
+
+              let status = document.getElementById('StatusText');
+              if(status != null) {
+                  status.innerHTML = "Status: Avatar Ready For Commands";
+              }
+          }
+          break;
+
+      case QCAvatar.AvatarEventTypes.Data_Channel_Closed:
+          {
+              console.log("*** COMMANDS CANNOT BE SENT TO THE AVATAR ***");
+
+              let status = document.getElementById('StatusText');
+              if(status != null) {
+                  status.innerHTML = "Status: Avatar Data Channel Disconnected";
+              }
+          }
+          break;
+
+          case QCAvatar.AvatarEventTypes.Video_Connected:
+              {
+                  console.log("*** AVATAR VIDEO IS PLAYING ***");
+  
+                  let status = document.getElementById('StatusText');
+                  if(status != null) {
+                      status.innerHTML = "Status: Avatar Video Is Playing";
+                  }
+              }
+              break;
+  }
+}
+

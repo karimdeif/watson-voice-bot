@@ -5,6 +5,12 @@ let tmp_resp = "";
 let tmp_stt_response = "";
 
 function displayMediaDiv(type, str) {
+
+  console.log('*****************')
+  console.log('SET CAMERA CENTER')
+  console.log('*****************')
+  AvatarStartVideo();
+
   let msgHtml = "";
 
   if (type == "video") {
