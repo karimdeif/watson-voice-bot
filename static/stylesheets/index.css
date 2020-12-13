@@ -1,3 +1,6 @@
+body {
+  margin: 0;
+}
 .fullpage {
   position: absolute;
   left: 0;
@@ -418,4 +421,18 @@ main {
   margin-top: 5px;
   margin-bottom: 5px;
 }
-
+/**********************  login styles *****************************/
+.login-page {
+  height: 100%;
+  background-color: #3598db;
+  display: flex;
+}
+.login-container {
+  width: 50%;
+  margin: 20px auto;
+  text-align: center;
+  min-height: 50%;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+}

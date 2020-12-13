@@ -1,13 +1,18 @@
-{% block body %}
-{% if session['logged_in'] %}
-
-You're logged in already!
-
-{% else %}
-<form action="/login" method="POST">
-  <input type="username" name="username" placeholder="Username">
-<input type="password" name="password" placeholder="Password">
-<input type="submit" value="Log in">
-</form>
-{% endif %}
-{% endblock %}
+{% block body %} {% if session['logged_in'] %} You're logged in already! {% else
+%}
+<div class="login-page">
+  <div class="login-container">
+    <form action="/login" method="POST">
+      <div class="login-input-cont">
+        <input type="username" name="username" placeholder="Username" />
+      </div>
+      <div class="login-input-cont">
+        <input type="password" name="password" placeholder="Password" />
+      </div>
+      <div class="login-input-cont">
+        <input type="submit" value="Log in" />
+      </div>
+    </form>
+  </div>
+</div>
+{% endif %} {% endblock %}
