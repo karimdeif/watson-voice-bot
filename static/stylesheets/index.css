@@ -424,15 +424,46 @@ main {
 /**********************  login styles *****************************/
 .login-page {
   height: 100%;
-  background-color: #3598db;
   display: flex;
+  background-image: linear-gradient(to right, #3d405e, #4b4e74);
+  font-family: "Roboto-Regular", "Arial", sans-serif;
 }
 .login-container {
   width: 50%;
   margin: 20px auto;
   text-align: center;
   min-height: 50%;
-  background-color: #fff;
   display: flex;
   align-items: center;
+  justify-content: center;
+}
+.login-input-cont {
+  display: flex;
+  flex-flow: column;
+  align-items: baseline;
+  margin-bottom: 30px;
+}
+.login-input-cont input {
+  border-radius: 6px;
+  border: 1px solid #fff;
+  padding: 6px;
+  width: 240px;
+}
+.login-input-cont span {
+  margin-bottom: 5px;
+  color: #fff;
+  font-size: 14px;
+}
+.login-input-button input {
+  background-color: #007aa8;
+  color: #fff;
+  border: 1px solid #007aa8;
+  border-radius: 15px;
+  padding: 5px;
+  min-width: 63px;
+}
+.login-title {
+  color: #fff;
+  font-size: 30px;
+  margin-bottom: 30px;
 }
