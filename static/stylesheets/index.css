@@ -222,7 +222,7 @@ main {
 }
 
 .msg-card-wide.mdl-card {
-  /*width: 100%;*/
+  width: 100% !important;
   height: auto;
   padding: 0px;
 }
@@ -233,7 +233,7 @@ main {
   border-radius: 6px 0px 6px 6px;
   background-color: #00a3e0;
   color: #fff;
-  max-width: 80%;
+  max-width: 85%;
   width: auto;
   margin-bottom: 30px;
   color: #fff;
@@ -266,7 +266,7 @@ main {
   border-top-right-radius: 6px;
   border-top-left-radius: 0px;
   background-color: white;
-  max-width: 80%;
+  max-width: 85%;
   width: auto;
   margin-bottom: 30px;
   width: fit-content;
