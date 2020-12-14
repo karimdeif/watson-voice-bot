@@ -5,10 +5,9 @@ let tmp_resp = "";
 let tmp_stt_response = "";
 
 function displayMediaDiv(type, str) {
-
-  console.log('*****************')
-  console.log('SET CAMERA CENTER')
-  console.log('*****************')
+  console.log("*****************");
+  console.log("SET CAMERA CENTER");
+  console.log("*****************");
   AvatarStartVideo();
 
   let msgHtml = "";
@@ -123,7 +122,22 @@ $(document).ready(function() {
       console.log(error);
     });
 });
-
+$(document).ready(function() {
+  $(".textfield__input").on("input", function() {
+    let value = $(this).val();
+    if (value == "") {
+      $(".send-icon").css(
+        "background-image",
+        "url(../../static/img/sendiconTransparent.svg)"
+      );
+    } else {
+      $(".send-icon").css(
+        "background-image",
+        "url(../../static/img/sendicon.svg)"
+      );
+    }
+  });
+});
 $("#q").keypress(function(event) {
   if (event.keyCode === 13) {
     tmp_resp = $("#q").val();
