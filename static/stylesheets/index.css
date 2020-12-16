@@ -243,6 +243,7 @@ main {
   margin-bottom: 30px;
   color: #fff;
   width: fit-content;
+  word-break: break-word;
 }
 
 .msg-card-wide.mdl-card.user {
