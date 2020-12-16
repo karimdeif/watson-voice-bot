@@ -160,6 +160,10 @@ $("#q").keypress(function(event) {
   }
 });
 $("#sendbtn").on("click", function(event) {
+  $(".send-icon").css(
+    "background-image",
+    "url(../../static/img/sendiconTransparent.svg)"
+  );
   tmp_resp = $("#q").val();
   console.log("Clickeded with: " + tmp_resp);
   displayMsgDiv(tmp_resp, "user");
