@@ -127,12 +127,16 @@ main {
   flex-direction: row;
   width: 100%;
   float: left;
+  align-items: center;
+  height: 100%;
 }
 
 #message-form .mdl-textfield {
   display: flex;
   padding: 0 10px;
   width: 100%;
+  align-items: center;
+  height: 100%;
 }
 
 #message-form .mdl-textfield .parent {
@@ -143,6 +147,7 @@ main {
 #image-form button {
   margin: 1px 0 0 20px;
   width: 35px;
+  height: 20px;
 }
 
 .mdl-card {
@@ -397,7 +402,7 @@ main {
   display: block;
   font-family: "Roboto-Regular", "Arial", sans-serif;
   font-size: 14px;
-  margin: -12px 1px 5px;
+  margin-left: 14px;
   /*padding: 8px 10px;*/
   text-align: left;
   width: 100%;
@@ -407,10 +412,11 @@ main {
   float: right;
   pointer-events: all;
   filter: drop-shadow(2px 4px 6px black);
+  margin-left: 10px;
 }
 .send-icon {
   background-image: url("../../static/img/sendiconTransparent.svg");
-  margin-top: -10px !important;
+  margin-top: 0px !important;
   background-repeat: no-repeat;
   background-position: center;
   background-color: transparent;
