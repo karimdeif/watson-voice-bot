@@ -209,9 +209,16 @@ main {
   color: #fff;
   background-color: #007aa8;
 }
+.mdl-list.disabled {
+  background-color: #e7e7e7;
+  color: #b5b6b7;
+  border: 1px solid #e7e7e7;
+  pointer-events: none;
+}
 .mdl-list.active {
   color: #fff;
-  background-color: #007aa8;
+  background-color: #007aa8 !important;
+  pointer-events: none;
 }
 .mdl-textfield__label:after {
   background-color: rgb(255, 152, 0);

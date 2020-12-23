@@ -186,6 +186,9 @@ $("#sendbtn").on("click", function(event) {
 function callConversationFromOption(res, user) {
   $(document).on("click", ".mdl-list", function(event) {
     $(this).addClass("active");
+    $(this)
+      .siblings()
+      .addClass("disabled");
   });
   displayMsgDiv(res, user);
   callConversation(res);
